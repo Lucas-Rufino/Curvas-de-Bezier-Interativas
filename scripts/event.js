@@ -57,8 +57,15 @@ function selectCBCurve(){
 }
 
 function modifyEvaluation(){
-	var nfEvaluation = document.getElementById('nfEvaluation').value
-    m.sendMessage('modifyEvaluation', {
-        data: nfEvaluation
-    });
+	var nfEvaluation = document.getElementById('nfEvaluation');
+    if(nfEvaluation.value >= 0){
+        m.sendMessage('modifyEvaluation', {
+            data: nfEvaluation.value
+        });
+    } else {
+        m.sendMessage('modifyEvaluation', {
+            data: 0
+        });
+        nfEvaluation.value = 0;
+    }
 }

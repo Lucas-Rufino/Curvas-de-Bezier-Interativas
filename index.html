@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">                                            <!-- Adiciona o encode de charset -->
+    <title>P1-1: Curvas de Bézier Interativas</title>                 <!-- Título da página -->
+    <script src="libraries/bonsai.js" charset="UTF-8"></script>       <!-- Adiciona a biblioteca de bonsai.js -->
+    <script src="libraries/jquery.js" charset="UTF-8"></script>       <!-- Adiciona a biblioteca de jquery.js -->
+    <script src="scripts/event.js" charset="UTF-8"></script>          <!-- Adiciona a biblioteca de jquery.js -->
+    <link rel="stylesheet" type="text/css" href="styles/theme.css">   <!-- Adiciona a folha de estilo theme.js -->
+  </head>
+  <body>
+    <nav>
+      <h3 class="title">Curvas de Bézier<br>Interativas</h3>
+      
+      <hr align="left" size="1" color=darkgray>
+      
+      <label class="subtitle">Selecione uma curva:</label>
+      <select id="sCurve" onchange="selectCurve()"></select>
+      
+      <button onclick="insertCurve()"> + </button>
+      <button onclick="removeCurve()"> - </button>
+
+      <br>
+      <input id="cbAll" type="checkbox" onclick="selectCBAll()"/>
+      <label class="text">Aplica em todas as curvas</label>
+      
+      <div>
+        <br>
+        <label class="subtitle">Vizualizar:</label>
+        
+        <br>
+        <input id="cbPoint" type="checkbox" checked onclick="selectCBPoint()"/>
+        <label class="text">Pontos de controle</label>
+        
+        <br>
+        <input id="cbPolygon" type="checkbox" checked onclick="selectCBPolygon()"/>
+        <label class="text">Poligonal de controle</label>
+        
+        <br>
+        <input id="cbCurve" type="checkbox" checked onclick="selectCBCurve()"/>
+        <label class="text">Pontos da curva</label>
+        
+        <br><br>
+        <label class="subtitle">Número de avaliações:</label>
+        <input id="nfEvaluation" type = "number" value = "200" min = "0" max = "10000"/>
+        <button id="ok" onclick="modifyEvaluation()">OK</button>
+
+        
+      </div>
+      
+      <hr align="left" size="1" color=darkgray>
+      
+      <label class="subtitle">Como usar:</label>
+      <p><b>Click</b> para adicionar um novo ponto de controle a curva.</p>
+      <p><b>Click-Arraste</b> para mover um ponto de controle de uma curva para outra localização.</p>
+      <p><b>Click-Duplo</b> para remover um ponto de controle da curva.</p>
+
+      <hr align="left" size="1" color=darkgray>
+      
+      <label class="subtitle">Sobre o projeto:</label>
+      <p>UFPE - Cin - Recife - PE</p>
+      <p>Processamento Gráfico<br>Prof. Sílvio Melo</p>
+      <p>Projeto Individual P1-1: <br>Curvas de Bézier Interativas<br>Desv. Lucas Alves Rufino</p>
+      
+    </nav>
+    
+    <div id="area"></div>
+
+    <script>
+      var colors = [];
+      var m = bonsai.run(document.getElementById('area'), {
+      url: 'scripts/main.js',
+      width: $(window).width(),
+      height: $(window).height()
+      });
+
+      m.on('message:insertCurveHTML', function(data) {
+        var sCurve = document.getElementById('sCurve');
+        var elem = document.createElement('option');
+        var text = document.createTextNode("Curva " + data.data[0]);
+        elem.setAttribute("value", "1");
+        elem.setAttribute("selected", "true");
+        elem.setAttribute("style", "background: white; color: black;");
+        elem.appendChild(text);
+        sCurve.appendChild(elem);
+        selectCurve();
+        document.getElementById("cbPoint").checked = data.data[1];
+        document.getElementById("cbPolygon").checked = data.data[2];
+        document.getElementById("cbCurve").checked = data.data[3];
+        document.getElementById("nfEvaluation").value = data.data[4];
+      });
+
+      m.on('message:selectCurveHTML', function(data) {
+        var sCurve = document.getElementById('sCurve');
+        sCurve.setAttribute("style","background: " + data.data[4] + ";");
+        document.getElementById("cbPoint").checked = data.data[0];
+        document.getElementById("cbPolygon").checked = data.data[1];
+        document.getElementById("cbCurve").checked = data.data[2];
+        document.getElementById("nfEvaluation").value = data.data[3];
+      });
+
+      m.on('message:removeCurveHTML', function(data) {
+        var sCurve = document.getElementById('sCurve');
+        sCurve.remove(sCurve.length-1);
+        selectCurve();
+      });
+    </script>
+    
+  </body>
+</html>
